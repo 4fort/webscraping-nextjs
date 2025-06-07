@@ -2,6 +2,7 @@
 
 import { ScrapeData } from "@/types/ScrapeData";
 import { ColumnDef } from "@tanstack/react-table";
+import { Badge } from "@/components/ui/badge";
 
 export const columns: ColumnDef<ScrapeData>[] = [
   {
@@ -46,17 +47,15 @@ export const columns: ColumnDef<ScrapeData>[] = [
   {
     accessorKey: "tags",
     header: "Tags",
-    cell: ({ row }) => (
-      <div className="flex flex-wrap gap-1">
-        {row.getValue<ScrapeData["tags"]>("tags").map((tag) => (
-          <span
-            key={tag}
-            className="bg-gray-200 text-gray-800 px-2 py-1 rounded"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
-    ),
+    cell: ({ row }) => {
+      const tags = row.getValue<ScrapeData["tags"]>("tags");
+      return (
+        <div className="flex flex-wrap gap-1">
+          {tags.map((tag, index) => (
+            <Badge key={index}>{tag}</Badge>
+          ))}
+        </div>
+      );
+    },
   },
 ];
