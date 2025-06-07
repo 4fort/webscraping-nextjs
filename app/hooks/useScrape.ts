@@ -6,12 +6,8 @@ import { useState } from "react";
 export default function useScrape() {
   const [scrapedPages, setScrapedPages] = useState<ScrapeData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  /**
-   * Scrapes the given URL and returns the scraped data.
-   * @param url - The URL to scrape.
-   * @returns A promise that resolves to the scraped data.
-   */
   const scrape = async (url: string): Promise<ScrapeData> => {
     setIsLoading(true);
 
@@ -23,15 +19,21 @@ export default function useScrape() {
 
     const data: ScrapeData = await response.json();
 
-    console.log("Scraped data:", data);
-
     setIsLoading(false);
-    setScrapedPages((prev) => [...prev, data]);
+    setScrapedPages((prev) => {
+      const page = prev.find((page) => page.headline === data.headline);
+      if (page) {
+        setError(`This page "${page.headline}" has already been scraped.`);
+        return prev;
+      }
+      return [...prev, data];
+    });
     return data;
   };
 
   return {
     scrapedPages,
+    error,
     isLoading,
     scrape,
   };
