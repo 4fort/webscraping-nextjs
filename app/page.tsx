@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { ScrapeData } from "@/types/ScrapeData";
 import { useState } from "react";
 import { columns } from "./columns";
+import { Plus } from "lucide-react";
 
 export default function Home() {
   const [scrapedPages, setScrapedPages] = useState<ScrapeData[]>([]);
@@ -14,7 +15,10 @@ export default function Home() {
     <main className="w-7xl mx-auto py-4 space-y-4">
       <div className="flex items-center gap-2">
         <Input placeholder="Enter url" type="text" />
-        <Button>Click Me</Button>
+        <Button>
+          <Plus />
+          Scrape
+        </Button>
       </div>
       <div className="">
         <DataTable data={scrapedPages} columns={columns} />
