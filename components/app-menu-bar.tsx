@@ -25,7 +25,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import Link from "next/link";
 
@@ -59,11 +59,79 @@ function FileMenu() {
 }
 
 function ViewMenu() {
+  const [zoomLevel, setZoomLevel] = useState(100);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // Handle fullscreen changes
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () =>
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "+") {
+        e.preventDefault();
+        handleZoomIn();
+      } else if ((e.ctrlKey || e.metaKey) && e.key === "-") {
+        e.preventDefault();
+        handleZoomOut();
+      } else if ((e.ctrlKey || e.metaKey) && e.key === "0") {
+        e.preventDefault();
+        handleResetZoom();
+      } else if (e.key === "F11") {
+        e.preventDefault();
+        handleToggleFullscreen();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  const handleZoomIn = () => {
+    const newZoom = Math.min(zoomLevel + 10, 200);
+    setZoomLevel(newZoom);
+    document.body.style.zoom = `${newZoom}%`;
+  };
+
+  const handleZoomOut = () => {
+    const newZoom = Math.max(zoomLevel - 10, 50);
+    setZoomLevel(newZoom);
+    document.body.style.zoom = `${newZoom}%`;
+  };
+
+  const handleResetZoom = () => {
+    setZoomLevel(100);
+    document.body.style.zoom = "100%";
+  };
+
+  const handleToggleFullscreen = async () => {
+    if (!document.fullscreenElement) {
+      try {
+        await document.documentElement.requestFullscreen();
+      } catch (err) {
+        console.error("Error attempting to enable fullscreen:", err);
+      }
+    } else {
+      try {
+        await document.exitFullscreen();
+      } catch (err) {
+        console.error("Error attempting to exit fullscreen:", err);
+      }
+    }
+  };
   return (
     <MenubarMenu>
       <MenubarTrigger>View</MenubarTrigger>
       <MenubarContent>
-        <MenubarItem>
+        <MenubarItem onClick={handleZoomIn}>
           Zoom In{" "}
           <MenubarShortcut>
             <pre className="inline bg-accent text-accent-foreground px-1 p-0.5 leading-0 rounded-sm">
@@ -75,7 +143,7 @@ function ViewMenu() {
             </pre>
           </MenubarShortcut>
         </MenubarItem>
-        <MenubarItem>
+        <MenubarItem onClick={handleZoomOut}>
           Zoom Out{" "}
           <MenubarShortcut>
             <pre className="inline bg-accent text-accent-foreground px-1 p-0.5 leading-0 rounded-sm">
@@ -87,15 +155,29 @@ function ViewMenu() {
             </pre>
           </MenubarShortcut>
         </MenubarItem>
+        <MenubarItem onClick={handleResetZoom} disabled={zoomLevel === 100}>
+          Reset Zoom{" "}
+          <MenubarShortcut>
+            <pre className="inline bg-accent text-accent-foreground px-1 p-0.5 leading-0 rounded-sm">
+              ⌘/ctrl
+            </pre>
+            {" + "}
+            <pre className="inline bg-accent text-accent-foreground px-1 p-0.5 leading-0 rounded-sm">
+              0
+            </pre>
+          </MenubarShortcut>
+        </MenubarItem>
         <MenubarSeparator />
-        <MenubarItem>
-          Toggle Fullscreen
+        <MenubarItem onClick={handleToggleFullscreen}>
+          {isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
           <MenubarShortcut>
             <pre className="inline bg-accent text-accent-foreground px-1 p-0.5 leading-0 rounded-sm">
               F11
             </pre>
           </MenubarShortcut>
         </MenubarItem>
+        <MenubarSeparator />
+        <MenubarItem disabled>Zoom: {zoomLevel}%</MenubarItem>
       </MenubarContent>
     </MenubarMenu>
   );
