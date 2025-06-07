@@ -29,16 +29,19 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const [globalFilter, setGlobalFilter] = useState<string>("");
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [inputValue, setInputValue] = useState<string>("");
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-
-    onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    onGlobalFilterChange: setGlobalFilter,
+    onColumnFiltersChange: setColumnFilters,
     state: {
+      globalFilter,
       columnFilters,
       columnVisibility: {
         source: false,
@@ -52,11 +55,42 @@ export function DataTable<TData, TValue>({
     <div className="">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Search tags"
-          value={(table.getColumn("tags")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("tags")?.setFilterValue(event.target.value)
-          }
+          placeholder="Search or use ?tags=value to filter by tags"
+          value={inputValue}
+          onChange={(event) => {
+            const value = event.target.value;
+            setInputValue(value);
+
+            const tagsQueryMatch = value.match(/^\?tags=(.*)$/);
+
+            if (tagsQueryMatch) {
+              const [, filterValue] = tagsQueryMatch;
+
+              table.setColumnFilters((prev) => {
+                const filteredPrev = prev.filter(
+                  (filter) => filter.id !== "tags"
+                );
+
+                if (filterValue.trim()) {
+                  return [
+                    ...filteredPrev,
+                    { id: "tags", value: filterValue.trim() },
+                  ];
+                } else {
+                  return filteredPrev;
+                }
+              });
+
+              table.setGlobalFilter("");
+              return;
+            }
+
+            if (!value.startsWith("?tags=")) {
+              table.setColumnFilters([]);
+            }
+
+            table.setGlobalFilter(String(value));
+          }}
           className="max-w-sm"
         />
       </div>

@@ -10,8 +10,10 @@ export const columns: ColumnDef<ScrapeData>[] = [
     header: "Headline",
     cell: ({ row }) => (
       <div className="flex flex-col">
-        <span className="text-sm">{row.getValue("headline")}</span>
-        <span className="text-xs text-muted-foreground italic">
+        <h2 className="font-bold w-md wrap-break-word whitespace-break-spaces">
+          {row.getValue("headline")}
+        </h2>
+        <span className="text-xs text-muted-foreground italic mt-1">
           {row.getValue("source")}
         </span>
         <span className="text-xs text-muted-foreground">
