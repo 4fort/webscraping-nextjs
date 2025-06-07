@@ -88,6 +88,13 @@ export default function Home() {
               type="text"
               value={urlInputValue}
               onChange={(e) => setUrlInputValue(e.target.value)}
+              onBlur={() => {
+                if (!urlInputValue) {
+                  return;
+                } else {
+                  handleAddURL();
+                }
+              }}
               disabled={isLoading}
               autoFocus
               ref={searchInputRef}

@@ -98,7 +98,7 @@ export const columns: ColumnDef<ScrapeData>[] = [
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
-        Reference
+        Relevance
         {column.getIsSorted() === "asc" ? (
           <ArrowUp />
         ) : column.getIsSorted() === "desc" ? (
