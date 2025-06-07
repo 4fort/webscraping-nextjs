@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Card,
-  CardAction,
   CardContent,
   CardFooter,
   CardHeader,
@@ -22,12 +21,15 @@ import {
 } from "lucide-react";
 import useScrape from "./hooks/useScrape";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import useInputAutoFocus from "./hooks/useInputAutoFocus";
 
 export default function Home() {
   const { scrapedPages, isLoading, error, scrape } = useScrape();
   const [urlInputValue, setUrlInputValue] = useState("");
   const [urls, setUrls] = useState<string[]>([]);
   const [inputError, setInputError] = useState<string | null>(null);
+
+  const searchInputRef = useInputAutoFocus();
 
   const handleAddURL = async () => {
     if (!urlInputValue) {
@@ -87,6 +89,8 @@ export default function Home() {
               value={urlInputValue}
               onChange={(e) => setUrlInputValue(e.target.value)}
               disabled={isLoading}
+              autoFocus
+              ref={searchInputRef}
             />
             <Button onClick={handleAddURL} disabled={isLoading}>
               {isLoading && <Loader2 className="animate-spin mr-2" />}

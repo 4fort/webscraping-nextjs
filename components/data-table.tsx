@@ -6,6 +6,8 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
+  getSortedRowModel,
+  SortingState,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -32,17 +34,21 @@ export function DataTable<TData, TValue>({
   const [globalFilter, setGlobalFilter] = useState<string>("");
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [inputValue, setInputValue] = useState<string>("");
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
     onColumnFiltersChange: setColumnFilters,
+    getSortedRowModel: getSortedRowModel(),
     state: {
       globalFilter,
       columnFilters,
+      sorting,
       columnVisibility: {
         source: false,
         publication_date: false,
