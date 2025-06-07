@@ -28,10 +28,15 @@ import {
 import React, { useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import Link from "next/link";
+import { DraftingCompass } from "lucide-react";
 
 export default function AppMenuBar() {
   return (
     <Menubar>
+      <DraftingCompass
+        className="size-4 mx-2 text-emerald-500"
+        strokeWidth={4}
+      />
       <FileMenu />
       <ViewMenu />
       <AboutMenu />

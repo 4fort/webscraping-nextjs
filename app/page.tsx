@@ -77,7 +77,7 @@ export default function Home() {
         <DataTable data={scrapedPages} columns={columns} />
       </div>
 
-      <Card className="col-span-4 sticky top-4 h-min">
+      <Card className="col-span-4 sticky top-14 h-min">
         <CardHeader>
           <CardTitle>Add URL to Scrape</CardTitle>
         </CardHeader>
