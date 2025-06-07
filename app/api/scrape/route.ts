@@ -53,6 +53,19 @@ export async function GET(request: NextRequest) {
       .map((tag) => tag.trim())
       .filter(Boolean) || [];
 
+  const contentText = $("body").text().toLowerCase();
+  const wordCount = contentText.split(/\s+/).length;
+
+  let score = Math.min(wordCount / 1000, 1) * 50;
+
+  if ($('meta[property="og:title"]').attr("content")) score += 10;
+  if ($('meta[property="og:description"]').attr("content")) score += 10;
+  if ($('meta[name="keywords"]').attr("content")) score += 10;
+  if ($('meta[property="article:published_time"]').attr("content")) score += 10;
+  if ($('meta[name="author"]').attr("content")) score += 10;
+
+  const relevance = Math.round(Math.min(score, 100));
+
   const scrapeData = {
     headline,
     author,
@@ -60,6 +73,7 @@ export async function GET(request: NextRequest) {
     source,
     image,
     tags,
+    relevance,
   } satisfies ScrapeData;
 
   return Response.json(scrapeData);

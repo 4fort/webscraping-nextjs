@@ -5,4 +5,5 @@ export type ScrapeData = {
   source: string;
   image: string;
   tags: string[];
+  relevance: number;
 };

@@ -10,7 +10,7 @@ export const columns: ColumnDef<ScrapeData>[] = [
     header: "Headline",
     cell: ({ row }) => (
       <div className="flex flex-col">
-        <h2 className="font-bold w-md wrap-break-word whitespace-break-spaces">
+        <h2 className="font-bold w-sm wrap-break-word whitespace-break-spaces">
           {row.getValue("headline")}
         </h2>
         <span className="text-xs text-muted-foreground italic mt-1">
@@ -75,6 +75,13 @@ export const columns: ColumnDef<ScrapeData>[] = [
     //     className="w-16 h-16 object-cover"
     //   />
     // ),
+  },
+  {
+    accessorKey: "relevance",
+    header: "Relevance",
+    cell: ({ row }) => (
+      <Badge variant="outline">{row.getValue("relevance")}%</Badge>
+    ),
   },
   {
     accessorKey: "tags",

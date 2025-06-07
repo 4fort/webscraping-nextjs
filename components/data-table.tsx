@@ -17,7 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { Input } from "./ui/input";
 
 interface DataTableProps<TData, TValue> {
@@ -51,46 +51,43 @@ export function DataTable<TData, TValue>({
     },
   });
 
+  const handleSearch = (event: ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setInputValue(value);
+
+    const tagsQueryMatch = value.match(/^\?tags=(.*)$/);
+
+    if (tagsQueryMatch) {
+      const [, filterValue] = tagsQueryMatch;
+
+      table.setColumnFilters((prev) => {
+        const filteredPrev = prev.filter((filter) => filter.id !== "tags");
+
+        if (filterValue.trim()) {
+          return [...filteredPrev, { id: "tags", value: filterValue.trim() }];
+        } else {
+          return filteredPrev;
+        }
+      });
+
+      table.setGlobalFilter("");
+      return;
+    }
+
+    if (!value.startsWith("?tags=")) {
+      table.setColumnFilters([]);
+    }
+
+    table.setGlobalFilter(String(value));
+  };
+
   return (
     <div className="">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Search or use ?tags=value to filter by tags"
+          placeholder="Search or use '?tags=value' to filter by tags"
           value={inputValue}
-          onChange={(event) => {
-            const value = event.target.value;
-            setInputValue(value);
-
-            const tagsQueryMatch = value.match(/^\?tags=(.*)$/);
-
-            if (tagsQueryMatch) {
-              const [, filterValue] = tagsQueryMatch;
-
-              table.setColumnFilters((prev) => {
-                const filteredPrev = prev.filter(
-                  (filter) => filter.id !== "tags"
-                );
-
-                if (filterValue.trim()) {
-                  return [
-                    ...filteredPrev,
-                    { id: "tags", value: filterValue.trim() },
-                  ];
-                } else {
-                  return filteredPrev;
-                }
-              });
-
-              table.setGlobalFilter("");
-              return;
-            }
-
-            if (!value.startsWith("?tags=")) {
-              table.setColumnFilters([]);
-            }
-
-            table.setGlobalFilter(String(value));
-          }}
+          onChange={handleSearch}
           className="max-w-sm"
         />
       </div>
