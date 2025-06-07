@@ -72,7 +72,7 @@ export default function Home() {
   };
 
   return (
-    <main className="p-4 w-7xl mx-auto grid grid-cols-12 gap-4">
+    <main className="py-4 px-24 w-full mx-auto grid grid-cols-12 gap-4">
       <div className="col-span-8">
         <DataTable data={scrapedPages} columns={columns} />
       </div>

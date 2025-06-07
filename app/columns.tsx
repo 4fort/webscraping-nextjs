@@ -3,6 +3,8 @@
 import { ScrapeData } from "@/types/ScrapeData";
 import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ArrowDown, ArrowUp } from "lucide-react";
 
 export const columns: ColumnDef<ScrapeData>[] = [
   {
@@ -16,31 +18,6 @@ export const columns: ColumnDef<ScrapeData>[] = [
         <span className="text-xs text-muted-foreground italic mt-1">
           {row.getValue("source")}
         </span>
-        <span className="text-xs text-muted-foreground">
-          {row.getValue("publication_date") === "No publication date found"
-            ? row.getValue("publication_date")
-            : new Date(row.getValue("publication_date")).toLocaleDateString(
-                "en-US",
-                {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                }
-              )}
-          {row.getValue("publication_date") !== "No publication date found" && (
-            <>
-              {" "}
-              at{" "}
-              {new Date(row.getValue("publication_date")).toLocaleTimeString(
-                "en-US",
-                {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                }
-              )}
-            </>
-          )}
-        </span>
       </div>
     ),
   },
@@ -53,10 +30,48 @@ export const columns: ColumnDef<ScrapeData>[] = [
   },
   {
     accessorKey: "publication_date",
-    // header: "Publication Date",
-    // cell: ({ row }) => (
-    //   <span className="text-sm">{row.getValue("publication_date")}</span>
-    // ),
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Publication Date
+        {column.getIsSorted() === "asc" ? (
+          <ArrowUp />
+        ) : column.getIsSorted() === "desc" ? (
+          <ArrowDown />
+        ) : (
+          ""
+        )}
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <span className="text-xs text-muted-foreground">
+        {row.getValue("publication_date") === "No publication date found"
+          ? row.getValue("publication_date")
+          : new Date(row.getValue("publication_date")).toLocaleDateString(
+              "en-US",
+              {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              }
+            )}
+        {row.getValue("publication_date") !== "No publication date found" && (
+          <>
+            {" "}
+            at{" "}
+            {new Date(row.getValue("publication_date")).toLocaleTimeString(
+              "en-US",
+              {
+                hour: "2-digit",
+                minute: "2-digit",
+              }
+            )}
+          </>
+        )}
+      </span>
+    ),
   },
   {
     accessorKey: "source",
@@ -78,7 +93,21 @@ export const columns: ColumnDef<ScrapeData>[] = [
   },
   {
     accessorKey: "relevance",
-    header: "Relevance",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Reference
+        {column.getIsSorted() === "asc" ? (
+          <ArrowUp />
+        ) : column.getIsSorted() === "desc" ? (
+          <ArrowDown />
+        ) : (
+          ""
+        )}
+      </Button>
+    ),
     cell: ({ row }) => (
       <Badge variant="outline">{row.getValue("relevance")}%</Badge>
     ),

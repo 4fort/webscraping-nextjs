@@ -51,7 +51,6 @@ export function DataTable<TData, TValue>({
       sorting,
       columnVisibility: {
         source: false,
-        publication_date: false,
         image: false,
       },
     },
